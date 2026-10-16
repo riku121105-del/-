@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>アニ名人 STUDIO AI</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        body {
+            background-color: #0d0b1e;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px 80px 16px;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 16px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #ff3366, #ff9933);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .logo-text h1 {
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+        .logo-text span {
+            font-size: 10px;
+            color: #ff9933;
+            letter-spacing: 1px;
+        }
+        .coin-box {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            gap: 6px;
+        }
+        .coin-box span {
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        .charge-btn {
+            background: linear-gradient(135deg, #ff9933, #ff3366);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .card {
+            background: #161330;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .section-title {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #b8b5d2;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: #0f0c24;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+        }
+        textarea:focus {
+            border-color: #ff3366;
+        }
+        .styles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .style-card {
+            background: #0f0c24;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .style-card.active {
+            border-color: #ff3366;
+            background: rgba(255, 51, 102, 0.1);
+        }
+        .style-card .icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        .style-card .name {
+            font-size: 11px;
+            color: #fff;
+        }
+        .generate-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ff3366, #ff9933);
+            border: none;
+            color: white;
+            padding: 16px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(255, 51, 102, 0.4);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .preview-box {
+            background: #0f0c24;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            position: relative;
+        }
+        canvas {
+            width: 100%;
+            height: 220px;
+            display: block;
+            background: #0a0818;
+        }
+        .preview-info {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 14px;
+            font-size: 12px;
+            color: #9a95b8;
+            background: rgba(0,0,0,0.2);
+        }
+        .download-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #ff3366;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 13px;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="logo-area">
+            <div class="logo-icon">🎬</div>
+            <div class="logo-text">
+                <h1>アニ名人</h1>
+                <span>STUDIO AI</span>
+            </div>
+        </div>
+        <div class="coin-box">
+            <span>🪙 1,050</span>
+            <button class="charge-btn" onclick="showToast('チャージ画面へ移動します')">+ チャージ</button>
+        </div>
+    </header>
+
+    <div class="card">
+        <div class="section-title">✨ プロンプト（指示文）を入力</div>
+        <textarea id="promptInput" placeholder="例：放課後の教室、窓の外を見る黒髪の女の子、夕暮れの美しい光、高品質セルアニメ風">放課後の教室、窓の外を見る黒髪の女の子、夕暮れの美しい光、高品質セルアニメ風</textarea>
+    </div>
+
+    <div class="card">
+        <div class="section-title">🎨 アニメスタイルを選択</div>
+        <div class="styles-grid">
+            <div class="style-card active" onclick="selectStyle(this)">
+                <div class="icon">👧</div>
+                <div class="name">最新TVアニメ</div>
+            </div>
+            <div class="style-card" onclick="selectStyle(this)">
+                <div class="icon">🌃</div>
+                <div class="name">サイバーパンク</div>
+            </div>
+            <div class="style-card" onclick="selectStyle(this)">
+                <div class="icon">📼</div>
+                <div class="name">90年代セル画</div>
+            </div>
+        </div>
+    </div>
+
+    <button class="generate-btn" onclick="startGeneration()">
+        ⚡ アニメーション生成を開始する (50 コイン)
+    </button>
+
+    <div class="card">
+        <div class="section-title">▶ 生成プレビュー (Preview)</div>
+        <div class="preview-box">
+            <canvas id="animeCanvas"></canvas>
+            <div class="preview-info">
+                <span id="styleLabel">スタイル: 最新TVアニメ調</span>
+                <span>解像度: 1080p (30FPS)</span>
+            </div>
+            <button class="download-btn" onclick="showToast('動画を保存しました！')">📥 動画をダウンロード</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast">通知メッセージ</div>
+
+<script>
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2500);
+    }
+
+    function selectStyle(element) {
+        document.querySelectorAll('.style-card').forEach(c => c.classList.remove('active'));
+        element.classList.add('active');
+        const name = element.querySelector('.name').textContent;
+        document.getElementById('styleLabel').textContent = 'スタイル: ' + name + '調';
+    }
+
+    function startGeneration() {
+        showToast('✨ アニメーション生成を開始しました！');
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 10;
+            if (progress >= 100) {
+                clearInterval(interval);
+                showToast('🎉 アニメーション生成が完了しました！');
+            }
+        }, 300);
+    }
+
+    // Canvas アニメーション描画
+    const canvas = document.getElementById('animeCanvas');
+    const ctx = canvas.getContext('2d');
+    let frame = 0;
+
+    function resizeCanvas() {
+        canvas.width = canvas.clientWidth;
+        canvas.height = 220;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function draw() {
+        frame++;
+        ctx.fillStyle = '#0f0c24';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // 背景の星・光の粒子
+        for (let i = 0; i < 25; i++) {
+            let x = (Math.sin(i * 99 + frame * 0.01) * 0.5 + 0.5) * canvas.width;
+            let y = (Math.cos(i * 33 + frame * 0.015) * 0.5 + 0.5) * canvas.height;
+            let radius = (i % 3) + 1;
+            ctx.fillStyle = i % 2 === 0 ? 'rgba(255, 51, 102, 0.7)' : 'rgba(255, 153, 51, 0.7)';
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // キャラクター（簡易セル画風シルエット）の描画
+        let cx = canvas.width / 2;
+        let cy = 130 + Math.sin(frame * 0.05) * 3;
+
+        // 髪の毛
+        ctx.fillStyle = '#2b1b40';
+        ctx.beginPath();
+        ctx.arc(cx, cy - 20, 35, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 顔
+        ctx.fillStyle = '#ffdfd3';
+        ctx.beginPath();
+        ctx.arc(cx, cy - 15, 26, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 目
+        ctx.fillStyle = '#ff3366';
+        ctx.beginPath();
+        ctx.arc(cx - 9, cy - 18, 4, 0, Math.PI * 2);
+        ctx.arc(cx + 9, cy - 18, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 服
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.moveTo(cx - 30, cy + 50);
+        ctx.lineTo(cx + 30, cy + 50);
+        ctx.lineTo(cx + 20, cy + 10);
+        ctx.lineTo(cx - 20, cy + 10);
+        ctx.closePath();
+        ctx.fill();
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+</script>
+
+</body>
+</html>
